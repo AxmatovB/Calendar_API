@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  fastapi-app:
+    build: .
+    container_name: apilare_fastapi
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./db.json:/app/db.json
+    env_file:
+      - .env
+    restart: unless-stopped

@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+pytz
+holidays
+jinja2
+python-dotenv

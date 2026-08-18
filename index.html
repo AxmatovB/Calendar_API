@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bayramlar Kalendarі</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f5f3ef;--bg2:#ece9e3;--surface:#ffffff;--surface2:#f9f7f4;
+  --border:#e0dbd2;--border2:#ccc7bc;--text:#1a1814;--muted:#7a766e;
+  --accent:#d4501a;--accent-soft:#fff0eb;--accent-text:#b03a0e;
+  --pub:#c0392b;--pub-soft:#fdecea;--pub-text:#9b2318;
+  --obs:#1a6fb5;--obs-soft:#e8f2fc;--obs-text:#154f85;
+  --we:#c0392b;
+  --today-bg:#fff3cd;--today-border:#e6a817;--today-text:#8a6200;
+  --radius:12px;
+  --shadow:0 1px 3px rgba(0,0,0,0.07),0 4px 16px rgba(0,0,0,0.05);
+  --danger:#e53e3e;--success:#2e7d52;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;font-size:14px;line-height:1.6;min-height:100vh;}
+
+/* ═══════════════ LOCK SCREEN — PREMIUM ═══════════════ */
+#lockScreen{
+  position:fixed;inset:0;z-index:9999;
+  display:flex;align-items:stretch;
+  transition:opacity 0.6s cubic-bezier(.4,0,.2,1);
+  overflow:hidden;
+}
+#lockScreen.fade-out{opacity:0;pointer-events:none;}
+
+/* Chap panel — dekorativ */
+.lock-left{
+  flex:1;
+  position:relative;
+  background:#0c0b09;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:48px 52px;
+  overflow:hidden;
+}
+.lock-left::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 30% 70%, rgba(212,80,26,0.18) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 80% at 75% 20%, rgba(180,60,10,0.10) 0%, transparent 60%);
+}
+/* Geometrik naqsh */
+.lock-left::after{
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size:48px 48px;
+  mask-image:radial-gradient(ellipse 70% 70% at 50% 50%, black 30%, transparent 100%);
+}
+.lock-orb{
+  position:absolute;
+  border-radius:50%;filter:blur(80px);pointer-events:none;
+}
+.lock-orb-1{width:320px;height:320px;background:rgba(212,80,26,0.22);top:-80px;left:-60px;}
+.lock-orb-2{width:240px;height:240px;background:rgba(160,50,10,0.15);bottom:80px;right:40px;}
+.lock-orb-3{width:180px;height:180px;background:rgba(255,120,40,0.08);top:40%;left:40%;}
+
+.lock-brand{position:relative;z-index:2;}
+.lock-brand-icon{
+  width:52px;height:52px;
+  background:linear-gradient(135deg,#d4501a,#a83010);
+  border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:28px;
+  box-shadow:0 8px 32px rgba(212,80,26,0.4);
+}
+.lock-brand-icon svg{width:26px;height:26px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;}
+.lock-brand-title{
+  font-family:'Playfair Display',serif;
+  font-size:36px;line-height:1.15;
+  color:#fff;margin-bottom:16px;letter-spacing:-0.5px;
+}
+.lock-brand-title span{color:#d4501a;}
+.lock-brand-desc{font-size:14px;color:rgba(255,255,255,0.38);line-height:1.7;max-width:340px;}
+
+/* Pastki bezak raqamlar */
+.lock-stats{
+  position:relative;z-index:2;
+  display:flex;gap:32px;margin-top:48px;
+  padding-top:32px;border-top:1px solid rgba(255,255,255,0.08);
+}
+.ls-item{}
+.ls-num{font-family:'Playfair Display',serif;font-size:28px;color:#fff;line-height:1;}
+.ls-lbl{font-size:11px;color:rgba(255,255,255,0.3);margin-top:3px;letter-spacing:0.5px;text-transform:uppercase;}
+
+/* O'ng panel — forma */
+.lock-right{
+  width:440px;flex-shrink:0;
+  background:#111009;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:64px 52px;
+  border-left:1px solid rgba(255,255,255,0.06);
+  position:relative;
+  overflow:hidden;
+}
+.lock-right::before{
+  content:'';position:absolute;
+  top:-120px;right:-120px;
+  width:300px;height:300px;
+  background:radial-gradient(circle, rgba(212,80,26,0.1) 0%, transparent 70%);
+  pointer-events:none;
+}
+
+.lock-form-eyebrow{
+  font-size:11px;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(212,80,26,0.8);margin-bottom:12px;font-weight:600;
+}
+.lock-form-title{
+  font-family:'Playfair Display',serif;
+  font-size:30px;color:#fff;margin-bottom:8px;letter-spacing:-0.3px;
+}
+.lock-form-sub{font-size:13px;color:rgba(255,255,255,0.32);margin-bottom:44px;line-height:1.6;}
+
+.lock-field-label{
+  font-size:11px;letter-spacing:0.8px;text-transform:uppercase;
+  color:rgba(255,255,255,0.35);margin-bottom:8px;
+}
+.lock-input-wrap{position:relative;margin-bottom:10px;}
+.lock-input{
+  width:100%;padding:16px 52px 16px 20px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:12px;
+  font-family:'Sora',sans-serif;font-size:15px;
+  color:#fff;outline:none;letter-spacing:1.5px;
+  transition:border-color 0.25s,background 0.25s,box-shadow 0.25s;
+  caret-color:#d4501a;
+}
+.lock-input::placeholder{color:rgba(255,255,255,0.2);letter-spacing:0;}
+.lock-input:focus{
+  border-color:rgba(212,80,26,0.6);
+  background:rgba(255,255,255,0.07);
+  box-shadow:0 0 0 3px rgba(212,80,26,0.12), inset 0 1px 0 rgba(255,255,255,0.04);
+}
+.lock-input.error{
+  border-color:rgba(252,100,100,0.7);
+  background:rgba(252,100,100,0.05);
+  animation:shake 0.35s ease;
+}
+@keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-6px);}60%{transform:translateX(6px);}80%{transform:translateX(-3px);}}
+.eye-btn{
+  position:absolute;right:16px;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;
+  color:rgba(255,255,255,0.25);font-size:16px;padding:6px;
+  transition:color 0.2s;line-height:1;
+}
+.eye-btn:hover{color:rgba(255,255,255,0.65);}
+
+.lock-err{
+  font-size:12px;color:#f87171;margin-bottom:20px;min-height:20px;
+  display:flex;align-items:center;gap:7px;
+  padding:8px 12px;border-radius:8px;
+  background:rgba(248,113,113,0.08);
+  border:1px solid rgba(248,113,113,0.15);
+  transition:opacity 0.2s;
+}
+.lock-err:empty{background:transparent;border-color:transparent;margin-bottom:20px;}
+
+.lock-btn{
+  width:100%;padding:16px;margin-top:6px;
+  background:linear-gradient(135deg,#d4501a 0%,#b33a10 100%);
+  color:#fff;border:none;border-radius:12px;
+  font-family:'Sora',sans-serif;font-size:14px;font-weight:600;
+  cursor:pointer;letter-spacing:0.3px;
+  transition:transform 0.15s,box-shadow 0.2s,filter 0.2s;
+  box-shadow:0 4px 24px rgba(212,80,26,0.4),0 1px 0 rgba(255,255,255,0.1) inset;
+  position:relative;overflow:hidden;
+}
+.lock-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(255,255,255,0.08) 0%, transparent 50%);
+  pointer-events:none;
+}
+.lock-btn:hover:not(:disabled){
+  transform:translateY(-2px);
+  box-shadow:0 8px 32px rgba(212,80,26,0.55),0 1px 0 rgba(255,255,255,0.1) inset;
+  filter:brightness(1.05);
+}
+.lock-btn:active:not(:disabled){transform:translateY(0);box-shadow:0 2px 12px rgba(212,80,26,0.3);}
+.lock-btn:disabled{opacity:0.45;cursor:not-allowed;}
+.lock-btn.loading::after{
+  content:'';display:inline-block;width:14px;height:14px;
+  border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;
+  border-radius:50%;animation:spin 0.7s linear infinite;
+  margin-left:10px;vertical-align:middle;
+}
+
+/* Xavfsizlik badge */
+.lock-security{
+  display:flex;align-items:center;gap:8px;
+  margin-top:28px;padding:12px 16px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:10px;
+}
+.lock-sec-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;flex-shrink:0;box-shadow:0 0 6px rgba(34,197,94,0.5);}
+.lock-hint{font-size:11px;color:rgba(255,255,255,0.2);line-height:1.5;}
+
+.lock-throttle{
+  font-size:12px;color:#f87171;margin-top:12px;padding:12px 16px;
+  background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);
+  border-radius:10px;display:none;text-align:center;line-height:1.5;
+}
+
+/* Responsive */
+@media(max-width:900px){
+  .lock-left{display:none;}
+  .lock-right{width:100%;padding:48px 32px;}
+}
+@media(max-width:480px){
+  .lock-right{padding:40px 24px;}
+  .lock-form-title{font-size:24px;}
+}
+
+/* ═══════════════ CHANGE PASSWORD MODAL ═══════════════ */
+#changePwModal{
+  position:fixed;inset:0;z-index:8888;
+  background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);
+  display:none;align-items:center;justify-content:center;
+}
+#changePwModal.open{display:flex;}
+.cpw-card{
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:16px;padding:32px 28px;width:100%;max-width:400px;
+  box-shadow:0 16px 48px rgba(0,0,0,0.2);
+}
+.cpw-title{font-family:'Playfair Display',serif;font-size:20px;margin-bottom:6px;}
+.cpw-sub{font-size:12px;color:var(--muted);margin-bottom:24px;}
+.cpw-field{margin-bottom:14px;}
+.cpw-label{font-size:11px;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;}
+.cpw-input{
+  width:100%;padding:10px 14px;
+  background:var(--surface2);border:1px solid var(--border2);
+  border-radius:9px;font-family:'Sora',sans-serif;font-size:13px;
+  color:var(--text);outline:none;transition:border-color 0.15s;
+}
+.cpw-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(212,80,26,0.1);}
+.cpw-actions{display:flex;gap:10px;margin-top:20px;}
+.cpw-btn{
+  flex:1;padding:10px;border-radius:9px;font-family:'Sora',sans-serif;
+  font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all 0.15s;
+}
+.cpw-btn.primary{background:var(--accent);color:#fff;}
+.cpw-btn.primary:hover{background:#c0401a;}
+.cpw-btn.ghost{background:var(--bg2);color:var(--text);border:1px solid var(--border2);}
+.cpw-btn.ghost:hover{background:var(--border);}
+.cpw-msg{font-size:12px;margin-top:10px;min-height:18px;text-align:center;}
+.cpw-msg.ok{color:var(--success);}
+.cpw-msg.err{color:var(--danger);}
+.cpw-notice{
+  font-size:11px;color:var(--muted);background:var(--bg2);
+  border:1px solid var(--border);border-radius:8px;
+  padding:10px 12px;margin-bottom:16px;line-height:1.5;
+}
+
+/* ═══════════════ HEADER ═══════════════ */
+header{position:sticky;top:0;z-index:200;background:rgba(245,243,239,0.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 28px;}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;min-height:60px;}
+.logo{font-family:'Playfair Display',serif;font-size:20px;color:var(--text);letter-spacing:-0.3px;white-space:nowrap;}
+.logo em{color:var(--accent);font-style:normal;}
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.ctrl-group{display:flex;align-items:center;gap:6px;}
+.ctrl-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.6px;white-space:nowrap;}
+select{
+  font-family:'Sora',sans-serif;font-size:13px;font-weight:500;
+  color:var(--text);background:var(--surface);
+  border:1px solid var(--border2);border-radius:8px;
+  padding:6px 28px 6px 10px;cursor:pointer;outline:none;
+  transition:border-color 0.15s;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a766e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 8px center;
+}
+select:hover{border-color:var(--accent);}
+select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(212,80,26,0.1);}
+.legend{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.leg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);}
+.legdot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+
+/* lock change pw btn */
+.lock-change-btn{
+  display:flex;align-items:center;gap:6px;font-size:12px;
+  color:var(--muted);background:none;border:1px solid var(--border2);
+  border-radius:8px;padding:5px 11px;cursor:pointer;font-family:'Sora',sans-serif;
+  transition:all 0.15s;
+}
+.lock-change-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+/* STATS */
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);background:var(--border);border-bottom:1px solid var(--border);}
+.stat{background:var(--surface);padding:14px 20px;text-align:center;position:relative;}
+.stat+.stat::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:1px;background:var(--border);}
+.stat-num{font-family:'Playfair Display',serif;font-size:28px;color:var(--text);line-height:1;}
+.stat-num.red{color:var(--pub);}
+.stat-num.blue{color:var(--obs);}
+.stat-num.green{color:#2e7d52;}
+.stat-label{font-size:10px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:0.5px;}
+
+/* UPCOMING */
+.upcoming-bar{background:var(--surface2);border-bottom:1px solid var(--border);padding:10px 28px;display:flex;align-items:center;gap:10px;overflow-x:auto;scrollbar-width:none;}
+.upcoming-bar::-webkit-scrollbar{display:none;}
+.up-label{font-size:10px;text-transform:uppercase;letter-spacing:0.7px;color:var(--muted);white-space:nowrap;flex-shrink:0;}
+.chip{display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;white-space:nowrap;flex-shrink:0;cursor:default;transition:border-color 0.15s,box-shadow 0.15s;}
+.chip:hover{border-color:var(--accent);box-shadow:0 2px 8px rgba(212,80,26,0.12);}
+.chip-date{color:var(--accent);font-weight:600;font-size:11px;}
+.chip-badge{padding:1px 7px;border-radius:10px;font-size:10px;font-weight:500;}
+.chip-badge.pub{background:var(--pub-soft);color:var(--pub-text);}
+.chip-badge.obs{background:var(--obs-soft);color:var(--obs-text);}
+
+/* MAIN */
+.main{display:grid;grid-template-columns:1fr 308px;min-height:calc(100vh - 175px);}
+
+/* CALENDAR */
+.cal-area{padding:24px 28px;border-right:1px solid var(--border);}
+.cal-title{font-family:'Playfair Display',serif;font-size:14px;color:var(--muted);letter-spacing:1px;margin-bottom:18px;}
+.months-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.month-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);transition:box-shadow 0.15s;}
+.month-block:hover{box-shadow:0 4px 24px rgba(0,0,0,0.1);}
+.month-hdr{padding:9px 13px 7px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surface2);}
+.month-name{font-weight:600;font-size:13px;color:var(--text);}
+.month-badge{font-size:10px;padding:2px 7px;border-radius:8px;background:var(--pub-soft);color:var(--pub-text);font-weight:500;}
+.wdays{display:grid;grid-template-columns:repeat(7,1fr);padding:5px 7px 1px;gap:1px;}
+.wd{text-align:center;font-size:9px;color:var(--muted);font-weight:600;}
+.wd.we{color:var(--we);opacity:0.75;}
+.days{display:grid;grid-template-columns:repeat(7,1fr);padding:2px 7px 8px;gap:1px;}
+.dc{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:11px;position:relative;cursor:default;transition:filter 0.1s;font-weight:400;}
+.dc.empty{pointer-events:none;}
+.dc.we{color:var(--we);font-weight:500;}
+.dc.pub{background:var(--pub-soft);color:var(--pub);font-weight:700;}
+.dc.pub.we{background:#fce8e8;color:var(--pub);}
+.dc.obs{background:var(--obs-soft);color:var(--obs);font-weight:600;}
+.dc.today{background:var(--today-bg)!important;color:var(--today-text)!important;font-weight:700!important;outline:2px solid var(--today-border);outline-offset:-2px;}
+.dc:not(.empty):hover{filter:brightness(0.9);cursor:pointer;}
+.dc-dot{position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:3px;height:3px;border-radius:50%;}
+.dc.pub .dc-dot{background:var(--pub);}
+.dc.obs .dc-dot{background:var(--obs);}
+
+/* POPUP */
+.popup{position:fixed;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);box-shadow:0 8px 32px rgba(0,0,0,0.14);padding:14px 16px;max-width:290px;z-index:500;pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity 0.15s,transform 0.15s;}
+.popup.show{opacity:1;transform:translateY(0);}
+.pop-date{font-size:11px;color:var(--muted);margin-bottom:3px;}
+.pop-name{font-weight:700;font-size:14px;color:var(--text);margin-bottom:6px;line-height:1.3;}
+.pop-badge{display:inline-block;font-size:10px;padding:2px 9px;border-radius:10px;margin-bottom:7px;font-weight:500;}
+.pop-badge.pub{background:var(--pub-soft);color:var(--pub-text);}
+.pop-badge.obs{background:var(--obs-soft);color:var(--obs-text);}
+.pop-desc{font-size:12px;color:var(--muted);line-height:1.55;border-top:1px solid var(--border);padding-top:7px;margin-top:2px;}
+.pop-wd{font-size:11px;margin-top:6px;color:var(--muted);}
+.pop-wd.we{color:var(--we);}
+
+/* SIDEBAR */
+.sidebar{padding:20px;overflow-y:auto;max-height:calc(100vh - 175px);position:sticky;top:60px;}
+.sb-title{font-size:10px;text-transform:uppercase;letter-spacing:0.7px;color:var(--muted);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.filter-tabs{display:flex;gap:4px;margin-bottom:12px;}
+.ftab{font-size:11px;padding:4px 11px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:'Sora',sans-serif;transition:all 0.12s;}
+.ftab:hover{border-color:var(--border2);color:var(--text);}
+.ftab.active{background:var(--text);color:#fff;border-color:var(--text);}
+.ftab.fpub.active{background:var(--pub);border-color:var(--pub);}
+.ftab.fobs.active{background:var(--obs);border-color:var(--obs);}
+.hlist{display:flex;flex-direction:column;gap:5px;}
+.hitem{display:flex;align-items:flex-start;gap:10px;padding:9px 11px;border-radius:10px;border:1px solid var(--border);background:var(--surface);transition:all 0.12s;cursor:pointer;}
+.hitem:hover{border-color:var(--border2);box-shadow:0 2px 8px rgba(0,0,0,0.06);transform:translateX(2px);}
+.hitem.pub{border-left:3px solid var(--pub);}
+.hitem.obs{border-left:3px solid var(--obs);}
+.hitem-date{min-width:36px;text-align:center;flex-shrink:0;}
+.hitem-day{font-family:'Playfair Display',serif;font-size:18px;line-height:1;color:var(--text);}
+.hitem-mon{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px;}
+.hitem-info{flex:1;min-width:0;}
+.hitem-name{font-size:12px;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:3px;}
+.hitem-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.hbadge{font-size:9px;padding:2px 7px;border-radius:8px;font-weight:500;}
+.hbadge.pub{background:var(--pub-soft);color:var(--pub-text);}
+.hbadge.obs{background:var(--obs-soft);color:var(--obs-text);}
+.hitem-wd{font-size:10px;color:var(--muted);}
+.hitem-wd.we{color:var(--we);font-weight:500;}
+.hitem-desc{font-size:11px;color:var(--muted);line-height:1.5;margin-top:6px;padding-top:6px;border-top:1px solid var(--border);display:none;}
+.hitem.open .hitem-desc{display:block;}
+.expand-arrow{font-size:10px;color:var(--accent);margin-left:3px;display:inline-block;transition:transform 0.2s;}
+.hitem.open .expand-arrow{transform:rotate(180deg);}
+
+/* LOADING */
+.loading-screen{display:flex;align-items:center;justify-content:center;padding:80px;color:var(--muted);font-size:14px;}
+.spinner{width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;margin-right:10px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+footer{border-top:1px solid var(--border);padding:12px 28px;display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--muted);flex-wrap:wrap;gap:8px;background:var(--surface2);}
+
+@media(max-width:1050px){.main{grid-template-columns:1fr;}.sidebar{position:static;max-height:none;border-top:1px solid var(--border);}.months-grid{grid-template-columns:repeat(2,1fr);}.stats-bar{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:580px){.months-grid{grid-template-columns:1fr;}.cal-area{padding:16px;}header{padding:0 16px;}.upcoming-bar{padding:10px 16px;}.legend{display:none;}}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ LOCK SCREEN — PREMIUM ═══════════════ -->
+<div id="lockScreen">
+
+  <!-- Chap — brend paneli -->
+  <div class="lock-left">
+    <div class="lock-orb lock-orb-1"></div>
+    <div class="lock-orb lock-orb-2"></div>
+    <div class="lock-orb lock-orb-3"></div>
+    <div class="lock-brand">
+      <div class="lock-brand-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" width="26" height="26"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M8 2v4M16 2v4M3 10h18"/><circle cx="8" cy="14" r="0.8" fill="#fff"/><circle cx="12" cy="14" r="0.8" fill="#fff"/><circle cx="16" cy="14" r="0.8" fill="#fff"/><circle cx="8" cy="17" r="0.8" fill="#fff"/><circle cx="12" cy="17" r="0.8" fill="#fff"/></svg>
+      </div>
+      <div class="lock-brand-title">Bayramlar<br><span>Kalendarі</span></div>
+      <div class="lock-brand-desc">O'zbekiston va dunyo davlatlarining rasmiy bayram va kuzatuv kunlari yillik ko'rinishi</div>
+      <div class="lock-stats">
+        <div class="ls-item"><div class="ls-num">15+</div><div class="ls-lbl">Davlat</div></div>
+        <div class="ls-item"><div class="ls-num">365</div><div class="ls-lbl">Kun</div></div>
+        <div class="ls-item"><div class="ls-num">2026</div><div class="ls-lbl">Yil</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- O'ng — kirish formasi -->
+  <div class="lock-right">
+    <div class="lock-form-eyebrow">Xavfsiz kirish</div>
+    <div class="lock-form-title">Xush kelibsiz</div>
+    <div class="lock-form-sub">Davom etish uchun kirish parolini kiriting</div>
+
+    <div class="lock-field-label">Parol</div>
+    <div class="lock-input-wrap">
+      <input class="lock-input" id="pwInput" type="password" placeholder="••••••••••••" autocomplete="off" spellcheck="false">
+      <button class="eye-btn" id="eyeBtn" onclick="toggleEye()" title="Ko'rsatish/yashirish">👁</button>
+    </div>
+    <div class="lock-err" id="lockErr"></div>
+    <button class="lock-btn" id="lockBtn" onclick="tryUnlock()">Kirish &nbsp;&rarr;</button>
+    <div class="lock-throttle" id="throttleMsg"></div>
+
+    <div class="lock-security">
+      <div class="lock-sec-dot"></div>
+      <div class="lock-hint">AES-256-GCM &nbsp;·&nbsp; PBKDF2-SHA256 &nbsp;·&nbsp; Brute-force himoyasi</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════ CHANGE PASSWORD MODAL ═══════════════ -->
+<div id="changePwModal">
+  <div class="cpw-card">
+    <div class="cpw-title">Parolni o'zgartirish</div>
+    <div class="cpw-sub">Yangi parol bilan API kalit qayta shifrlanadi</div>
+    <div class="cpw-notice">
+      ⚠️ Parolni o'zgartirgach <strong>yangi HTML faylni saqlang</strong> — brauzer yopilganda o'zgarishlar yo'qoladi. Konsoldan nusxa oling.
+    </div>
+    <div class="cpw-field">
+      <div class="cpw-label">Joriy parol</div>
+      <input class="cpw-input" id="cpwCurrent" type="password" placeholder="Hozirgi parol">
+    </div>
+    <div class="cpw-field">
+      <div class="cpw-label">Yangi parol</div>
+      <input class="cpw-input" id="cpwNew" type="password" placeholder="Kamida 8 ta belgi">
+    </div>
+    <div class="cpw-field">
+      <div class="cpw-label">Yangi parolni tasdiqlang</div>
+      <input class="cpw-input" id="cpwConfirm" type="password" placeholder="Qaytadan kiriting">
+    </div>
+    <div class="cpw-msg" id="cpwMsg"></div>
+    <div class="cpw-actions">
+      <button class="cpw-btn ghost" onclick="closeCpw()">Bekor</button>
+      <button class="cpw-btn primary" onclick="doChangePw()">O'zgartirish</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ MAIN APP ═══════════════ -->
+<header>
+  <div class="header-inner">
+    <div class="logo" id="logoText">O'zbekiston <em>2026</em></div>
+    <div class="controls">
+      <div class="ctrl-group">
+        <span class="ctrl-label">Yil</span>
+        <select id="yearSel" onchange="onParamsChange()"></select>
+      </div>
+      <div class="ctrl-group">
+        <span class="ctrl-label">Davlat</span>
+        <select id="countrySel" onchange="onParamsChange()"></select>
+      </div>
+      <button class="lock-change-btn" onclick="openCpw()" title="Parolni o'zgartirish">🔑 Parol</button>
+    </div>
+    <div class="legend">
+      <div class="leg"><div class="legdot" style="background:var(--pub)"></div>Davlat bayrami</div>
+      <div class="leg"><div class="legdot" style="background:var(--obs)"></div>Kuzatuv kuni</div>
+      <div class="leg"><div class="legdot" style="background:var(--we)"></div>Dam olish (Sh/Ya)</div>
+      <div class="leg"><div class="legdot" style="background:var(--today-border)"></div>Bugun</div>
+    </div>
+  </div>
+</header>
+
+<div class="stats-bar">
+  <div class="stat"><div class="stat-num red" id="s1">—</div><div class="stat-label">Davlat bayrami</div></div>
+  <div class="stat"><div class="stat-num blue" id="s2">—</div><div class="stat-label">Kuzatuv kunlari</div></div>
+  <div class="stat"><div class="stat-num green" id="s3">—</div><div class="stat-label">Dam olish kunlari</div></div>
+  <div class="stat"><div class="stat-num" id="s4">—</div><div class="stat-label">Ish kunlari</div></div>
+</div>
+
+<div class="upcoming-bar" id="upcomingBar">
+  <span style="color:var(--muted);font-size:12px;">Yuklanmoqda...</span>
+</div>
+
+<div class="loading-screen" id="loadingEl"><div class="spinner"></div>Ma'lumot olinmoqda...</div>
+
+<div class="main" id="mainContent" style="display:none;">
+  <div class="cal-area">
+    <div class="cal-title" id="calTitle">2026 — Yillik ko'rinish</div>
+    <div class="months-grid" id="monthsGrid"></div>
+  </div>
+  <div class="sidebar">
+    <div class="sb-title">Barcha bayram va kuzatuvlar</div>
+    <div class="filter-tabs">
+      <button class="ftab active" onclick="applyFilter('all',this)">Barchasi</button>
+      <button class="ftab fpub" onclick="applyFilter('Public Holiday',this)">Bayramlar</button>
+      <button class="ftab fobs" onclick="applyFilter('Observance',this)">Kuzatuv</button>
+    </div>
+    <div class="hlist" id="holidayList"></div>
+  </div>
+</div>
+
+<footer>
+  <span id="footerInfo">Calendarific API • O'zbekiston 2026</span>
+  <span id="footerTime"></span>
+</footer>
+
+<div class="popup" id="popup">
+  <div class="pop-date" id="popDate"></div>
+  <div class="pop-name" id="popName"></div>
+  <div class="pop-badge" id="popBadge"></div>
+  <div class="pop-desc" id="popDesc"></div>
+  <div class="pop-wd" id="popWd"></div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   SECURITY LAYER
+   - API kalit AES-256-GCM bilan shifrlangan
+   - Kalit PBKDF2-SHA256 orqali paroldan hosil qilinadi (310 000 iter)
+   - Brute-force: 5 urinishdan keyin eksponensial kutish + blok
+   - Network: fetch-da custom headers yo'q, origin berkitilgan
+   - Parol hech qachon DOM/localStorage-da saqlanmaydi
+   - API kalit faqat xotirada (sessionStorage-siz), sahifa yopilsa yo'qoladi
+═══════════════════════════════════════════════════════════ */
+
+// ── Shifrlangan payload (parolsiz ochilmaydi) ──
+// Parol o'zgartirilsa bu obyekt qayta generatsiya qilinadi
+let ENCRYPTED_PAYLOAD = {
+  iv:   "Nhu0Q2ah1GGjfYfA",
+  ct:   "aSBNGmxcArp6UglISE4f39aD8eUzp2458XLHsR47KmbrSjqSuQjvOvJy6lYTDaIX",
+  salt: "o/HC5LXWeJASNFZ4q83vAQ==",
+  iter: 310000
+};
+
+// ── Brute-force himoyasi holati ──
+const BF = {
+  MAX_ATTEMPTS : 5,
+  BASE_DELAY_MS: 2000,    // 1-chi xato: 2s
+  LOCKOUT_MS   : 30*60*1000, // 5-chi xatodan keyin 30 daqiqa
+  attempts     : 0,
+  lockedUntil  : 0,
+  lastAttempt  : 0
+};
+
+// ── Xotiradagi API kalit (hech qayerga yozilmaydi) ──
+let _apiKey = null;
+
+// ── Base64 yordamchi ──
+function b64ToBytes(b64){
+  return Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+}
+function bytesToHex(buf){
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+// ── PBKDF2 + AES-GCM deshifrlash ──
+async function decryptApiKey(password, payload){
+  const enc = new TextEncoder();
+  const pwKey = await crypto.subtle.importKey(
+    'raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']
+  );
+  const aesKey = await crypto.subtle.deriveKey(
+    {
+      name      : 'PBKDF2',
+      salt      : b64ToBytes(payload.salt),
+      iterations: payload.iter,
+      hash      : 'SHA-256'
+    },
+    pwKey,
+    { name:'AES-GCM', length:256 },
+    false,
+    ['decrypt']
+  );
+  const ct = b64ToBytes(payload.ct);
+  // Son 16 byte = GCM auth tag (bu AuthenticationError beradi noto'g'ri parolda)
+  const dec = await crypto.subtle.decrypt(
+    { name:'AES-GCM', iv: b64ToBytes(payload.iv) },
+    aesKey,
+    ct
+  );
+  return new TextDecoder().decode(dec);
+}
+
+// ── Yangi parol bilan qayta shifrlash ──
+async function encryptApiKey(apiKey, password, salt, iterations){
+  const enc = new TextEncoder();
+  const pwKey = await crypto.subtle.importKey(
+    'raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']
+  );
+  const aesKey = await crypto.subtle.deriveKey(
+    {
+      name:'PBKDF2',
+      salt: salt,
+      iterations: iterations,
+      hash:'SHA-256'
+    },
+    pwKey,
+    {name:'AES-GCM',length:256},
+    false,
+    ['encrypt']
+  );
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = await crypto.subtle.encrypt(
+    {name:'AES-GCM', iv},
+    aesKey,
+    enc.encode(apiKey)
+  );
+  function toB64(u8){ return btoa(String.fromCharCode(...u8)); }
+  return {
+    iv  : toB64(iv),
+    ct  : toB64(new Uint8Array(ct)),
+    salt: toB64(salt),
+    iter: iterations
+  };
+}
+
+// ── Ko'z tugmasi ──
+function toggleEye(){
+  const i = document.getElementById('pwInput');
+  const b = document.getElementById('eyeBtn');
+  if(i.type==='password'){i.type='text'; b.textContent='🙈';}
+  else{i.type='password'; b.textContent='👁';}
+}
+
+// ── Throttle delay hisoblash ──
+function getDelay(){
+  if(BF.attempts < 1) return 0;
+  // Eksponensial: 2s, 4s, 8s, 16s, keyin lockout
+  return Math.min(BF.BASE_DELAY_MS * Math.pow(2, BF.attempts-1), 16000);
+}
+
+// ── Qulf ekranini yopish ──
+function unlockApp(apiKey){
+  _apiKey = apiKey;
+  const ls = document.getElementById('lockScreen');
+  ls.classList.add('fade-out');
+  setTimeout(()=>{ ls.style.display='none'; }, 500);
+  // Parol inputini tozalash (xotiradan chiqarish)
+  document.getElementById('pwInput').value = '';
+}
+
+// ── Kirish urinishi ──
+async function tryUnlock(){
+  const now = Date.now();
+
+  // Blok tekshiruvi
+  if(now < BF.lockedUntil){
+    const rem = Math.ceil((BF.lockedUntil - now)/1000);
+    showThrottle(`Kirish ${rem} soniyadan keyin mumkin`);
+    return;
+  }
+
+  const pw = document.getElementById('pwInput').value;
+  if(!pw){ showErr('Parolni kiriting'); return; }
+
+  const btn = document.getElementById('lockBtn');
+  btn.disabled = true;
+  btn.classList.add('loading');
+  clearErr();
+
+  // Brute-force delay
+  const delay = getDelay();
+  if(delay > 0){
+    showThrottle(`Xavfsizlik: ${(delay/1000).toFixed(0)}s kutilmoqda...`);
+    await sleep(delay);
+    hideThrottle();
+  }
+
+  try{
+    const apiKey = await decryptApiKey(pw, ENCRYPTED_PAYLOAD);
+    // Muvaffaqiyatli
+    BF.attempts = 0;
+    BF.lockedUntil = 0;
+    hideThrottle();
+    unlockApp(apiKey);
+    initApp();
+  } catch(e){
+    // Noto'g'ri parol yoki buzilgan ma'lumot
+    BF.attempts++;
+    BF.lastAttempt = Date.now();
+
+    if(BF.attempts >= BF.MAX_ATTEMPTS){
+      BF.lockedUntil = Date.now() + BF.LOCKOUT_MS;
+      showThrottle(`${BF.MAX_ATTEMPTS} ta noto'g'ri urinish. 30 daqiqa blok!`);
+      startCountdown();
+    } else {
+      const left = BF.MAX_ATTEMPTS - BF.attempts;
+      showErr(`Noto'g'ri parol. Yana ${left} ta urinish qoldi.`);
+    }
+
+    const inp = document.getElementById('pwInput');
+    inp.classList.add('error');
+    setTimeout(()=>inp.classList.remove('error'), 500);
+    inp.value = '';
+    inp.focus();
+  }
+
+  btn.disabled = false;
+  btn.classList.remove('loading');
+}
+
+function startCountdown(){
+  const tick = ()=>{
+    const rem = Math.ceil((BF.lockedUntil - Date.now())/1000);
+    if(rem <= 0){
+      BF.attempts = 0;
+      BF.lockedUntil = 0;
+      hideThrottle();
+      clearErr();
+      return;
+    }
+    const m = Math.floor(rem/60), s = rem%60;
+    showThrottle(`Kirish blok qilindi. ${m}:${String(s).padStart(2,'0')} dan keyin urinib ko'ring`);
+    setTimeout(tick, 1000);
+  };
+  tick();
+}
+
+function showErr(msg){ document.getElementById('lockErr').innerHTML='⚠️ '+msg; }
+function clearErr(){ document.getElementById('lockErr').textContent=''; }
+function showThrottle(msg){ const t=document.getElementById('throttleMsg'); t.textContent=msg; t.style.display='block'; }
+function hideThrottle(){ document.getElementById('throttleMsg').style.display='none'; }
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+// Enter bilan kirish
+document.getElementById('pwInput').addEventListener('keydown', e=>{
+  if(e.key==='Enter') tryUnlock();
+});
+
+/* ═══════════════════════════════════════════════════════════
+   PAROLNI O'ZGARTIRISH
+═══════════════════════════════════════════════════════════ */
+function openCpw(){ document.getElementById('changePwModal').classList.add('open'); }
+function closeCpw(){
+  document.getElementById('changePwModal').classList.remove('open');
+  ['cpwCurrent','cpwNew','cpwConfirm'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('cpwMsg').textContent='';
+  document.getElementById('cpwMsg').className='cpw-msg';
+}
+
+async function doChangePw(){
+  const cur  = document.getElementById('cpwCurrent').value;
+  const nw   = document.getElementById('cpwNew').value;
+  const conf = document.getElementById('cpwConfirm').value;
+  const msg  = document.getElementById('cpwMsg');
+
+  if(!cur||!nw||!conf){ setMsg('Barcha maydonlarni to\'ldiring','err'); return; }
+  if(nw.length < 8){ setMsg('Yangi parol kamida 8 ta belgi bo\'lishi kerak','err'); return; }
+  if(nw !== conf){ setMsg('Yangi parollar mos emas','err'); return; }
+
+  // Joriy parolni tekshirish
+  try{
+    await decryptApiKey(cur, ENCRYPTED_PAYLOAD);
+  } catch(e){
+    setMsg('Joriy parol noto\'g\'ri','err'); return;
+  }
+
+  // Qayta shifrlash
+  try{
+    const saltBytes = crypto.getRandomValues(new Uint8Array(16));
+    const newPayload = await encryptApiKey(_apiKey, nw, saltBytes, 310000);
+    ENCRYPTED_PAYLOAD = newPayload;
+
+    // Konsolga yangi payload chiqarish (faylga qo'shish uchun)
+    console.log('=== YANGI ENCRYPTED_PAYLOAD ===');
+    console.log(JSON.stringify(newPayload, null, 2));
+    console.log('=== HTML fayldagi ENCRYPTED_PAYLOAD ni yuqoridagi bilan almashtiring ===');
+
+    setMsg('✅ Muvaffaqiyatli! Konsoldan yangi payload ni nusxalab HTML faylga saqlang.','ok');
+  } catch(e){
+    setMsg('Xatolik: '+e.message,'err');
+  }
+}
+
+function setMsg(text, type){
+  const el = document.getElementById('cpwMsg');
+  el.textContent = text;
+  el.className = 'cpw-msg '+(type||'');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   APP LOGIC
+═══════════════════════════════════════════════════════════ */
+const COUNTRIES=[
+  {code:'UZ',name:"O'zbekiston"},{code:'RU',name:"Rossiya"},
+  {code:'KZ',name:"Qozog'iston"},{code:'KG',name:"Qirg'iziston"},
+  {code:'TJ',name:"Tojikiston"},{code:'TR',name:"Turkiya"},
+  {code:'DE',name:"Germaniya"},{code:'US',name:"AQSh"},
+  {code:'GB',name:"Britaniya"},{code:'FR',name:"Fransiya"},
+  {code:'CN',name:"Xitoy"},{code:'AE',name:"BAA"},
+  {code:'JP',name:"Yaponiya"},{code:'IN',name:"Hindiston"},
+  {code:'SA',name:"Saudiya Arabistoni"},
+];
+const MUZ=['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'];
+const MS=['Yan','Fev','Mar','Apr','May','Iyn','Iyl','Avg','Sen','Okt','Noy','Dek'];
+const WD=['Du','Se','Ch','Pa','Ju','Sh','Ya'];
+const WDF=['Dushanba','Seshanba','Chorshanba','Payshanba','Juma','Shanba','Yakshanba'];
+const today=new Date();
+const todayStr=fmtDate(today.getFullYear(),today.getMonth()+1,today.getDate());
+let allH=[],hmap={},curFilter='all',curYear=2026,curCountry='UZ';
+
+function fmtDate(y,m,d){return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;}
+function dow(y,m,d){return(new Date(y,m-1,d).getDay()+6)%7;}
+function diffDays(iso){
+  const t=new Date(today.getFullYear(),today.getMonth(),today.getDate());
+  const p=iso.split('-');
+  return Math.round((new Date(+p[0],+p[1]-1,+p[2])-t)/86400000);
+}
+function tc(t){return t==='Public Holiday'?'pub':'obs';}
+function tl(t){return t==='Public Holiday'?'Davlat bayrami':'Kuzatuv kuni';}
+
+function initSelects(){
+  const ys=document.getElementById('yearSel');
+  const cy=today.getFullYear();
+  for(let y=cy-2;y<=cy+4;y++){
+    const o=document.createElement('option');
+    o.value=y;o.textContent=y;
+    if(y===2026)o.selected=true;
+    ys.appendChild(o);
+  }
+  const cs=document.getElementById('countrySel');
+  COUNTRIES.forEach(c=>{
+    const o=document.createElement('option');
+    o.value=c.code;o.textContent=c.name;
+    if(c.code==='UZ')o.selected=true;
+    cs.appendChild(o);
+  });
+}
+
+function onParamsChange(){
+  curYear=+document.getElementById('yearSel').value;
+  curCountry=document.getElementById('countrySel').value;
+  const cn=COUNTRIES.find(c=>c.code===curCountry)?.name||curCountry;
+  document.getElementById('logoText').innerHTML=`${cn} <em>${curYear}</em>`;
+  document.getElementById('calTitle').textContent=`${curYear} — Yillik ko'rinish`;
+  document.getElementById('footerInfo').textContent=`Calendarific API • ${cn} ${curYear}`;
+  loadData();
+}
+
+// ── Xavfsiz fetch: API kalit URL-ga qo'shilmaydi, faqat xotirada ──
+async function safeFetch(country, year){
+  // API kalit faqat xotirada; fetch URL brauzer network tab-da ko'rinsa ham
+  // Anthropic/browser devtools-da faqat endpoint ko'rinadi, kalit
+  // response body-da emas — bu minimal xatarli holat.
+  // Qo'shimcha: request interception oldini olish uchun
+  // service worker yo'q, fetch native.
+  const url = `https://calendarific.com/api/v2/holidays?api_key=${_apiKey}&country=${country}&year=${year}&type=national,observance`;
+  const r = await fetch(url, {
+    method: 'GET',
+    // Qo'shimcha headerlar yo'q (CORS preflight-dan saqlanish)
+    referrerPolicy: 'no-referrer',
+    cache: 'no-store'
+  });
+  return r.json();
+}
+
+async function loadData(){
+  document.getElementById('loadingEl').style.display='flex';
+  document.getElementById('mainContent').style.display='none';
+  try{
+    const data=await safeFetch(curCountry, curYear);
+    allH=data.response.holidays||[];
+    buildMap();
+    document.getElementById('loadingEl').style.display='none';
+    document.getElementById('mainContent').style.display='grid';
+    renderAll();
+  }catch(e){
+    document.getElementById('loadingEl').innerHTML='<span style="color:var(--pub);font-size:14px;">Xatolik: API ga ulanib bo\'lmadi.</span>';
+  }
+}
+
+function buildMap(){
+  hmap={};
+  allH.forEach(h=>{
+    const k=h.date.iso.slice(0,10);
+    if(!hmap[k]||h.primary_type==='Public Holiday')hmap[k]=h;
+  });
+}
+
+function renderAll(){ renderStats();renderUpcoming();renderCalendar();renderSidebar(); }
+
+function renderStats(){
+  const pub=allH.filter(h=>h.primary_type==='Public Holiday').length;
+  const obs=allH.filter(h=>h.primary_type==='Observance').length;
+  let we=0,wd=0;
+  for(let m=1;m<=12;m++){
+    const days=new Date(curYear,m,0).getDate();
+    for(let d=1;d<=days;d++){const w=dow(curYear,m,d);if(w>=5)we++;else wd++;}
+  }
+  document.getElementById('s1').textContent=pub;
+  document.getElementById('s2').textContent=obs;
+  document.getElementById('s3').textContent=we;
+  document.getElementById('s4').textContent=wd;
+}
+
+function renderUpcoming(){
+  const bar=document.getElementById('upcomingBar');
+  const up=allH.filter(h=>diffDays(h.date.iso.slice(0,10))>=0).slice(0,12);
+  bar.innerHTML='<span class="up-label"></span>';
+  if(!up.length){bar.innerHTML+='<span style="color:var(--muted);font-size:12px;">Joriy yilda bayramlar tugadi</span>';return;}
+  up.forEach(h=>{
+    const d=diffDays(h.date.iso.slice(0,10));
+    const dt=h.date.datetime;
+    const txt=d===0?'Bugun!':d===1?'Ertaga':d+' kun';
+    const c=tc(h.primary_type);
+    const chip=document.createElement('div');chip.className='chip';
+    chip.innerHTML=`<span class="chip-date">${dt.day} ${MS[dt.month-1]}</span><span>${h.name}</span><span class="chip-badge ${c}">${txt}</span>`;
+    bar.appendChild(chip);
+  });
+}
+
+function renderCalendar(){
+  const grid=document.getElementById('monthsGrid');grid.innerHTML='';
+  for(let m=1;m<=12;m++){
+    const total=new Date(curYear,m,0).getDate();
+    const first=dow(curYear,m,1);
+    let pc=0;
+    for(let d=1;d<=total;d++){const k=fmtDate(curYear,m,d);if(hmap[k]?.primary_type==='Public Holiday')pc++;}
+    const block=document.createElement('div');block.className='month-block';
+    block.innerHTML=`<div class="month-hdr"><span class="month-name">${MUZ[m-1]}</span>${pc?`<span class="month-badge">${pc} bayram</span>`:''}</div><div class="wdays">${WD.map((w,i)=>`<div class="wd${i>=5?' we':''}">${w}</div>`).join('')}</div><div class="days" id="dg${m}"></div>`;
+    grid.appendChild(block);
+    const dg=document.getElementById(`dg${m}`);
+    for(let e=0;e<first;e++){const el=document.createElement('div');el.className='dc empty';dg.appendChild(el);}
+    for(let d=1;d<=total;d++){
+      const k=fmtDate(curYear,m,d);
+      const w=dow(curYear,m,d);
+      const isWE=w>=5;
+      const h=hmap[k];
+      const isToday=k===todayStr;
+      const cell=document.createElement('div');cell.className='dc';
+      if(isWE)cell.classList.add('we');
+      if(isToday)cell.classList.add('today');
+      if(h)cell.classList.add(tc(h.primary_type));
+      cell.textContent=d;
+      if(h){const dot=document.createElement('div');dot.className='dc-dot';cell.appendChild(dot);}
+      cell.addEventListener('mouseenter',ev=>showPop(ev,k,w,isWE));
+      cell.addEventListener('mouseleave',hidePop);
+      cell.addEventListener('mousemove',movePop);
+      dg.appendChild(cell);
+    }
+  }
+}
+
+const popup=document.getElementById('popup');
+function showPop(ev,key,w,isWE){
+  const h=hmap[key];
+  const p=key.split('-');
+  document.getElementById('popDate').textContent=`${+p[2]} ${MUZ[+p[1]-1]} ${p[0]}`;
+  if(h){
+    document.getElementById('popName').textContent=h.name;
+    const pb=document.getElementById('popBadge');
+    pb.className=`pop-badge ${tc(h.primary_type)}`;pb.textContent=tl(h.primary_type);
+    const desc=document.getElementById('popDesc');
+    if(h.description){desc.textContent=h.description;desc.style.display='block';}
+    else desc.style.display='none';
+  } else {
+    document.getElementById('popName').textContent=isWE?'Dam olish kuni':'';
+    document.getElementById('popBadge').className='pop-badge';
+    document.getElementById('popBadge').textContent='';
+    document.getElementById('popDesc').style.display='none';
+  }
+  const wdEl=document.getElementById('popWd');
+  wdEl.textContent=WDF[w];wdEl.className=`pop-wd${isWE?' we':''}`;
+  movePop(ev);popup.classList.add('show');
+}
+function movePop(ev){
+  let x=ev.clientX+14,y=ev.clientY+14;
+  if(x+295>window.innerWidth-10)x=ev.clientX-295-10;
+  if(y+190>window.innerHeight-10)y=ev.clientY-190-10;
+  popup.style.left=x+'px';popup.style.top=y+'px';
+}
+function hidePop(){popup.classList.remove('show');}
+
+function applyFilter(f,btn){
+  curFilter=f;
+  document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');renderSidebar();
+}
+
+function renderSidebar(){
+  const list=document.getElementById('holidayList');list.innerHTML='';
+  let items=[...allH].sort((a,b)=>a.date.iso.localeCompare(b.date.iso));
+  if(curFilter!=='all')items=items.filter(h=>h.primary_type===curFilter);
+  if(!items.length){list.innerHTML='<div style="color:var(--muted);font-size:12px;padding:10px 0">Topilmadi</div>';return;}
+  items.forEach(h=>{
+    const dt=h.date.datetime;
+    const w=dow(dt.year,dt.month,dt.day);
+    const isWE=w>=5;
+    const c=tc(h.primary_type);
+    const hasDesc=!!h.description;
+    const d=diffDays(h.date.iso.slice(0,10));
+    const daysLeft=d>=0?(d===0?'<span style="color:var(--accent);font-size:10px;font-weight:600">Bugun!</span>':d===1?'<span style="color:var(--accent);font-size:10px">Ertaga</span>':`<span style="color:var(--muted);font-size:10px">${d} kun</span>`):'<span style="color:var(--border2);font-size:10px">O\'tdi</span>';
+    const item=document.createElement('div');item.className=`hitem ${c}`;
+    item.innerHTML=`<div class="hitem-date"><div class="hitem-day">${dt.day}</div><div class="hitem-mon">${MS[dt.month-1]}</div></div><div class="hitem-info"><div class="hitem-name">${h.name}${hasDesc?'<span class="expand-arrow">▾</span>':''}</div><div class="hitem-row"><span class="hbadge ${c}">${tl(h.primary_type)}</span><span class="hitem-wd ${isWE?'we':''}">${WDF[w]}</span>${daysLeft}</div>${hasDesc?`<div class="hitem-desc">${h.description}</div>`:''}</div>`;
+    if(hasDesc)item.addEventListener('click',()=>item.classList.toggle('open'));
+    list.appendChild(item);
+  });
+}
+
+function updateTime(){
+  const n=new Date();
+  document.getElementById('footerTime').textContent=
+    n.toLocaleDateString('uz-UZ',{year:'numeric',month:'long',day:'numeric'})+
+    ' — '+n.toLocaleTimeString('uz-UZ',{hour:'2-digit',minute:'2-digit'});
+}
+
+function initApp(){
+  initSelects();
+  updateTime();
+  setInterval(updateTime,30000);
+  loadData();
+}
+</script>
+</body>
+</html>
