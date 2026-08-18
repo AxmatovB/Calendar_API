@@ -2,6 +2,8 @@ import os
 import json
 import time
 import secrets
+import urllib.request
+from email.utils import parsedate_to_datetime
 from collections import deque
 from fastapi import FastAPI, Request, Depends, HTTPException, status
 from fastapi.responses import HTMLResponse, JSONResponse
@@ -167,7 +169,15 @@ async def get_month_data(region: str):
 @app.get("/api/time/{region}")
 async def get_current_time(region: str):
     tz = get_tz(region)
-    now = datetime.now(tz)
+    try:
+        req = urllib.request.Request("https://google.com", method="HEAD")
+        with urllib.request.urlopen(req, timeout=5) as response:
+            date_str = response.headers.get("Date")
+            google_utc_time = parsedate_to_datetime(date_str)
+            now = google_utc_time.astimezone(tz)
+    except Exception:
+        now = datetime.now(tz)
+        
     return {
         "region": region,
         "hour": now.hour,

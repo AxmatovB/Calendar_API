@@ -32,17 +32,17 @@ Oddiy foydalanuvchilar / mijozlar tomonidan ishlatiladigan API'lar. Hudud sifati
 ### 1. Oylik Kalendar va Ma'lumotlar
 - **Endpoint**: `GET /api/month/{region}`
 - **Vazifasi**: Kiritilgan hudud bo'yicha joriy oydagi barcha kunlar, jami ish kunlari va dam olish kunlari sonini hisoblab qaytaradi.
-- **Misol**: `http://localhost:8000/api/month/UZ`
+- **Misol**: `http://localhost:2006/api/month/UZ`
 
 ### 2. Joriy Vaqt API
 - **Endpoint**: `GET /api/time/{region}`
 - **Vazifasi**: Kiritilgan hudud uchun soat, minut, sekund, oy, va yilning nechinchi haftasi ekanligini aniq ko'rsatib beradi.
-- **Misol**: `http://localhost:8000/api/time/Asia/Tashkent`
+- **Misol**: `http://localhost:2006/api/time/Asia/Tashkent`
 
 ### 3. Bayramlar API
 - **Endpoint**: `GET /api/holidays/{region}`
 - **Vazifasi**: Kiritilgan davlatning joriy yildagi barcha bayramlari, ularning nomlari va sanalarini qaytaradi (python `holidays` kutubxonasi yordamida).
-- **Misol**: `http://localhost:8000/api/holidays/US`
+- **Misol**: `http://localhost:2006/api/holidays/US`
 
 ---
 
@@ -63,7 +63,7 @@ Admin paneli ishlashi uchun mo'ljallangan va faqat **HTTP Basic Auth** orqali hi
 
 Dasturga kelayotgan barcha so'rovlarni kuzatish, zararli foydalanuvchilarni bloklash va tizimni boshqarish uchun juda qulay GUI (Grafik interfeys) qilingan.
 
-- **URL Manzil:** [http://localhost:8000/admin/admin](http://localhost:8000/admin/admin)
+- **URL Manzil:** [http://localhost:2006/admin/admin](http://localhost:2006/admin/admin)
 - **Login:** `admin`
 - **Parol:** `SuperSecretAdminPassword2026!`
 
@@ -96,4 +96,4 @@ Keyin loyihani ishga tushiring:
 ```bash
 python run.py
 ```
-*API avtomatik hujjatlari (Swagger UI) ga kirish uchun: `http://localhost:8000/docs` manziliga o'ting.*
+*API avtomatik hujjatlari (Swagger UI) ga kirish uchun: `http://localhost:2006/docs` manziliga o'ting.*
